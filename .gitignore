@@ -1,0 +1,12 @@
+node/
+python/
+perl/
+php/
+ruby/
+.*
+!.gitignore
+!.bashrc
+!.alias.bash
+/pprof
+gocode/
+
