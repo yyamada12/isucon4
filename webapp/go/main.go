@@ -18,6 +18,7 @@ import (
 
 var db *sqlx.DB
 var usernameMap *sync.Map
+var userIDMap *sync.Map
 var (
 	UserLockThreshold int
 	IPBanThreshold    int
@@ -52,10 +53,12 @@ func init() {
 
 	// setup usernameMap
 	usernameMap = new(sync.Map)
+	userIDMap = new(sync.Map)
 	users := []User{}
 	_ = db.Select(&users, "SELECT id, login, password_hash, salt FROM users")
 	for _, user := range users {
 		usernameMap.Store(user.Login, user)
+		userIDMap.Store(strconv.Itoa(user.ID), user)
 	}
 }
 

@@ -125,14 +125,16 @@ func attemptLogin(req *http.Request) (*User, error) {
 
 func getCurrentUser(userId interface{}) *User {
 	user := &User{}
-	row := db.QueryRow(
-		"SELECT id, login, password_hash, salt FROM users WHERE id = ?",
-		userId,
-	)
-	err := row.Scan(&user.ID, &user.Login, &user.PasswordHash, &user.Salt)
-
-	if err != nil {
+	id, ok := userId.(string)
+	if !ok {
 		return nil
+	}
+	val, ok := userIDMap.Load(id)
+	if ok {
+		u, _ := val.(User)
+		user = &u
+	} else {
+		user = nil
 	}
 
 	return user
