@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,13 +8,15 @@ import (
 
 	"github.com/go-martini/martini"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"github.com/martini-contrib/render"
 	"github.com/martini-contrib/sessions"
 
 	_ "net/http/pprof"
 )
 
-var db *sql.DB
+var db *sqlx.DB
+
 var (
 	UserLockThreshold int
 	IPBanThreshold    int
@@ -33,7 +34,7 @@ func init() {
 
 	var err error
 
-	db, err = sql.Open("mysql", dsn)
+	db, err = sqlx.Open("mysql", dsn)
 	if err != nil {
 		panic(err)
 	}
@@ -47,6 +48,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
 }
 
 func main() {
