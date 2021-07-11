@@ -5,10 +5,10 @@ import (
 )
 
 type User struct {
-	ID           int
-	Login        string
-	PasswordHash string
-	Salt         string
+	ID           int    `db:"id"`
+	Login        string `db:"login"`
+	PasswordHash string `db:"password_hash"`
+	Salt         string `db:"salt"`
 
 	LastLogin *LastLogin
 }

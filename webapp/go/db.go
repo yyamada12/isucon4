@@ -95,17 +95,12 @@ func attemptLogin(req *http.Request) (*User, error) {
 		createLoginLog(succeeded, remoteAddr, loginName, user)
 	}()
 
-	row := db.QueryRow(
-		"SELECT id, login, password_hash, salt FROM users WHERE login = ?",
-		loginName,
-	)
-	err := row.Scan(&user.ID, &user.Login, &user.PasswordHash, &user.Salt)
-
-	switch {
-	case err == sql.ErrNoRows:
+	val, ok := usernameMap.Load(loginName)
+	if ok {
+		u, _ := val.(User)
+		user = &u
+	} else {
 		user = nil
-	case err != nil:
-		return nil, err
 	}
 
 	if banned, _ := isBannedIP(remoteAddr); banned {

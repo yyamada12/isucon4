@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
 
 	"github.com/go-martini/martini"
 	_ "github.com/go-sql-driver/mysql"
@@ -16,7 +17,7 @@ import (
 )
 
 var db *sqlx.DB
-
+var usernameMap *sync.Map
 var (
 	UserLockThreshold int
 	IPBanThreshold    int
@@ -49,6 +50,13 @@ func init() {
 		panic(err)
 	}
 
+	// setup usernameMap
+	usernameMap = new(sync.Map)
+	users := []User{}
+	_ = db.Select(&users, "SELECT id, login, password_hash, salt FROM users")
+	for _, user := range users {
+		usernameMap.Store(user.Login, user)
+	}
 }
 
 func main() {
