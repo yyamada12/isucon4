@@ -3,12 +3,16 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"net/http"
+	"strconv"
+
 	"github.com/go-martini/martini"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/martini-contrib/render"
 	"github.com/martini-contrib/sessions"
-	"net/http"
-	"strconv"
+
+	_ "net/http/pprof"
 )
 
 var db *sql.DB
@@ -46,6 +50,10 @@ func init() {
 }
 
 func main() {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
+
 	m := martini.Classic()
 
 	store := sessions.NewCookieStore([]byte("secret-isucon"))
